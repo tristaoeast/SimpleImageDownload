@@ -1,19 +1,18 @@
 package pt.ulisboa.tecnico.cmov.simpleimagedownload;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-
-import java.net.URL;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.net.URL;
 
 
 public class MainActivity extends ActionBarActivity implements Handler.Callback {
@@ -28,20 +27,20 @@ public class MainActivity extends ActionBarActivity implements Handler.Callback 
                 Bitmap image = BitmapFactory.decodeStream(imageUrl.openStream());
                 if (image != null) {
 //                    Log.i("DL", "Successfully retrieved file!");
-                    sendMessage("Successfully retrieved file!");
+                    sendMsg("Successfully retrieved file!");
                 } else {
-                    sendMessage("Failed decoding file from stream");
+                    sendMsg("Failed decoding file from stream");
 //                    Log.i("DL", "Failed decoding file from stream");
                 }
             } catch (Exception e) {
-                sendMessage("Failed downloading file!");
+                sendMsg("Failed downloading file!");
 //                Log.i("DL", "Failed downloading file!");
                 e.printStackTrace();
             }
         }
     };
 
-    private void sendMessage(String what) {
+    private void sendMsg(String what) {
         Bundle bundle = new Bundle();
         bundle.putString("status", what);
         Message message = new Message();
@@ -76,15 +75,25 @@ public class MainActivity extends ActionBarActivity implements Handler.Callback 
     }
 
     public void showImage(Bitmap image) {
-        ImageView iv = new ImageView(this);
-        iv.setImageResource(R.drawable.beerbottle);
-        RelativeLayout rl = (RelativeLayout) findViewById(R.id.RelativeLayout01);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.BELOW, R.id.ButtonRecalculate);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        rl.addView(iv, lp);
+
+        ImageView iv = (ImageView) findViewById(R.id.iv_froyo);
+        iv.setImageBitmap(image);
+
+//        ImageView iv = new ImageView(this);
+//        iv.setId(5);
+//        iv.setImageBitmap(image);
+//        LinearLayout linlay = (LinearLayout) findViewById(R.id.ll_01);
+//        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.WRAP_CONTENT,
+//                RelativeLayout.LayoutParams.WRAP_CONTENT);
+//        lp.addRule(RelativeLayout.BELOW, R.id.ButtonRecalculate);
+//        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+//        linlay.addView(iv, lp);
+    }
+
+    public void iv_onClick(View view) {
+        ImageView iv = (ImageView) findViewById(R.id.iv_froyo);
+        iv.setImageBitmap(null);
     }
 
     public class DownloadTask extends AsyncTask<String, Void, Bitmap> {
@@ -94,7 +103,10 @@ public class MainActivity extends ActionBarActivity implements Handler.Callback 
 
             Bitmap image = null;
             try {
+
                 URL imageUrl = new URL(urls[0], urls[1], urls[2]);
+                imageUrl = new URL("http://upload.wikimedia.org/wikipedia/commons/2/20/Big_Ben_IJA.PNG");
+                Log.d("URL CREATED","");
                 image = BitmapFactory.decodeStream(imageUrl.openStream());
                 if (image != null) {
                     Log.i("DL", "Successfully retrieved file!");
@@ -118,7 +130,5 @@ public class MainActivity extends ActionBarActivity implements Handler.Callback 
         protected void onPostExecute(Bitmap image) {
             showImage(image);
         }
-
-
     }
 }
